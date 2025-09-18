@@ -1,6 +1,7 @@
 package com.sambiswas.pokergame.enums;
 
 public enum TableState {
+    WAITING_FOR_PLAYERS("WAITING_FOR_PLAYERS"),
     PRE_FLOP("PRE_FLOP"),
     FLOP("FLOP"),
     RIVER("RIVER"),
