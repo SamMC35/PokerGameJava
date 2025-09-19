@@ -13,5 +13,13 @@ public class Table {
     private List<Card> tableCards;
     private int maxBet;
     private TableState tableState;
-    private List<Player> playerList;
+
+    private boolean isStateChanged;
+    private boolean isTableProcessed;
+
+    public void setTableState(TableState tableState){
+        isStateChanged = true;
+        this.tableState = tableState;
+        isTableProcessed = false;
+    }
 }

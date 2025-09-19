@@ -1,6 +1,7 @@
 package com.sambiswas.pokergame.enums;
 
 public enum Hand {
+    NONE(-1),
     HIGH_CARD(0),
     ONE_PAIR(1),
     TWO_PAIR(2),

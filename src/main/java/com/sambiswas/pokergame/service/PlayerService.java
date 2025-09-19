@@ -6,12 +6,14 @@ import com.sambiswas.pokergame.enums.InputType;
 import java.util.List;
 
 public interface PlayerService {
-    void setPlayerList(List<Player> playerList);
 
-    boolean checkIfStateCanBeChanged(int maxBet);
-    void processPlayerInput(Player player, InputType inputType);
+    void addPlayer(Player player);
+    List<Player> returnPlayerList();
+
+    boolean checkIfStateCanBeChangedForCards(int maxBet);
+    void processPlayerInput(Player player, InputType inputType, int maxBet, int raiseValue);
     void distributeCards();
-    void getPlayerById();
+    Player getPlayerById(long id);
     void resetPlayers();
     void setDealer();
 

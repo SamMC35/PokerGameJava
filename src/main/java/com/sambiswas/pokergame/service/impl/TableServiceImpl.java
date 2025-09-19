@@ -2,6 +2,7 @@ package com.sambiswas.pokergame.service.impl;
 
 import com.sambiswas.pokergame.entity.Table;
 import com.sambiswas.pokergame.enums.TableState;
+import com.sambiswas.pokergame.exception.PokerGameException;
 import com.sambiswas.pokergame.service.TableService;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +10,11 @@ import java.util.ArrayList;
 
 @Component
 public class TableServiceImpl implements TableService {
-    private Table table;
-    private boolean isTableInitiated;
+    private final Table table;
+    private final boolean isTableInitiated;
 
     public TableServiceImpl(){
-        table = new Table(0, new ArrayList<>(), 0, TableState.WAITING_FOR_PLAYERS, new ArrayList<>());
+        table = new Table(0, new ArrayList<>(), 0, TableState.WAITING_FOR_PLAYERS, false, false);
         isTableInitiated = false;
     }
 
@@ -54,17 +55,39 @@ public class TableServiceImpl implements TableService {
     public void processTable() {
         //Check if state can be switched
         if(checkSwitchState()){
-            switchState();
+            switchStateForCardPlay();
         }
-        processState();
+        if(!table.isTableProcessed()) {
+            processState();
+        }
     }
 
-    private void switchState() {
-
+    private void switchStateForCardPlay() {
+        switch(table.getTableState()){
+            case PRE_FLOP -> table.setTableState(TableState.FLOP);
+            case FLOP -> table.setTableState(TableState.TURN);
+            case TURN -> table.setTableState(TableState.RIVER);
+            case RIVER -> table.setTableState(TableState.SHOWDOWN);
+            default -> throw new PokerGameException("Invalid state for card play: " + table.getTableState());
+        }
     }
 
     private void processState() {
+        switch(table.getTableState()){
+            case PRE_FLOP :
+                break;
+            case FLOP:
+                //TODO: Add deck Service
 
+                break;
+            case TURN, RIVER:
+                //TODO: Add adding one card
+                break;
+            case SHOWDOWN:
+                break;
+        }
+
+        table.setTableProcessed(true);
     }
 
     private boolean checkSwitchState() {
