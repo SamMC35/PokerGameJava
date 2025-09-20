@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @Component
 public class TableServiceImpl implements TableService {
     private final Table table;
-    private final boolean isTableInitiated;
+    private boolean isTableInitiated;
 
     public TableServiceImpl(){
         table = new Table(0, new ArrayList<>(), 0, TableState.WAITING_FOR_PLAYERS, false, false);
@@ -24,6 +24,8 @@ public class TableServiceImpl implements TableService {
         table.setPot(0);
         table.setMaxBet(0);
         table.setTableState(TableState.PRE_FLOP);
+
+        isTableInitiated = true;
     }
 
     @Override

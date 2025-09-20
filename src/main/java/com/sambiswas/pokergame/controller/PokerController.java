@@ -5,12 +5,10 @@ import com.sambiswas.pokergame.entity.Table;
 import com.sambiswas.pokergame.service.PlayerService;
 import com.sambiswas.pokergame.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class PokerController {
@@ -26,13 +24,31 @@ public class PokerController {
         return tableService.getTableInfo();
     }
 
-    @GetMapping("/returnPlayerList")
+    @GetMapping("/getPlayers")
     public List<Player> returnPlayerList(){
         return playerService.returnPlayerList();
     }
 
-    @PostMapping("/addPlayer")
-    public void addPlayer(@RequestBody Player player){
-        playerService.addPlayer(player);
+    @PostMapping("/addPlayers")
+    public Map<String, Long> addPlayer(@RequestBody Player player){
+        return Map.of("id", playerService.addPlayer(player));
     }
+
+    @GetMapping("getPlayer/{id}")
+    public Player getPlayerById(@PathVariable long id){
+        return playerService.getPlayerById(id);
+    }
+
+    @GetMapping("/hasGameStarted")
+    public Map<String, Boolean> hasGameInitiated(){
+        return Map.of("tableInitiated", tableService.isTableInitiated());
+    }
+
+    @PostMapping("/startGame")
+    public void startGame(){
+        tableService.resetTable();
+        playerService.resetPlayers();
+    }
+
+
 }

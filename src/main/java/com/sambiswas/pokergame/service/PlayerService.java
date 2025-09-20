@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface PlayerService {
 
-    void addPlayer(Player player);
+    long addPlayer(Player player);
     List<Player> returnPlayerList();
 
     boolean checkIfStateCanBeChangedForCards(int maxBet);

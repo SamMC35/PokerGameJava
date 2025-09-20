@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Server Test with QR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QRCode.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+  <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- LEFT: Server Test -->
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Server Test</h2>
+
+      <div class="overflow-x-auto">
+        <table id="data-table" class="min-w-full border border-gray-200 divide-y divide-gray-200 rounded-lg overflow-hidden">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                Player
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <!-- Data will be injected here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="waiting" class="flex items-center justify-center mt-6 space-x-3 text-gray-600">
+        <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        <span class="text-sm font-medium">Waiting for players...</span>
+      </div>
+
+      <form  onsubmit="startGame(event)">
+        <button type="submit"
+          class="w-full bg-blue-600 text-white py-2 px-3 sm:px-4 rounded-lg shadow 
+                hover:bg-blue-700 focus:outline-none focus:ring-2 
+                focus:ring-blue-500 focus:ring-offset-1 text-sm sm:text-base mt-6">
+          Start Game
+        </button>
+      </form>
+    </div>
+
+    <!-- RIGHT: QR Code -->
+    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Scan to Join</h2>
+
+      <!-- QR code container -->
+      <div id="qrcode" class="mx-auto"></div>
+
+      <p class="mt-4 text-gray-600 text-sm sm:text-base text-center">
+        Point your camera at the QR code 
+              </p>
+    </div>
+  </div>
+
+  <script>
+    // Change this to your server link
+    const link = "https://google.com"; 
+
+    // Set link in the anchor
+    document.getElementById("qrLink").href = link;
+
+    // Generate QR code
+    new QRCode(document.getElementById("qrcode"), {
+      text: link,
+      width: 250,
+      height: 250,
+    });
+  </script>
+
+  <script th:src="@{/js/server.js}"></script>
+</body>
+</html>
+
+
+

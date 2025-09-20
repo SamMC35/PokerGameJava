@@ -42,12 +42,12 @@ public class DeckServiceImpl implements DeckService {
 
     private void gatherAllCombos(List<Card> tableCards, List<Card> dummyList, List<List<Card>> cardCombos, int start) {
         if(dummyList.size() == 3){
-            cardCombos.add(dummyList);
+            cardCombos.add(new ArrayList<>(dummyList));
             return;
         }
 
-        for(int i = start; i < cardCombos.size(); i++){
-            dummyList.add(cardList.get(i));
+        for(int i = start; i < tableCards.size(); i++){
+            dummyList.add(tableCards.get(i));
             gatherAllCombos(tableCards, dummyList, cardCombos, i + 1);
             dummyList.removeLast();
         }

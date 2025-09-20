@@ -33,9 +33,10 @@ public class PlayerServiceImpl implements PlayerService {
 
 
     @Override
-    public void addPlayer(Player player) {
+    public long addPlayer(Player player) {
         player.setId(counter.incrementAndGet());
         playerList.add(player);
+        return player.getId();
     }
 
     @Override
