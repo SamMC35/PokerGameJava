@@ -1,11 +1,8 @@
 package com.sambiswas.pokergame.entity;
 
 import com.sambiswas.pokergame.enums.Hand;
+import com.sambiswas.pokergame.enums.PlayerPerk;
 import com.sambiswas.pokergame.enums.PlayerState;
-import com.sambiswas.pokergame.enums.Rank;
-import com.sambiswas.pokergame.enums.Suit;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -20,8 +17,13 @@ public class Player {
     private Hand hand = Hand.NONE;
     private PlayerState playerState = PlayerState.WAITING;
     private boolean isCurrentPlayer = false;
-    private List<Card> cardList = List.of(new Card(Suit.CLUBS, Rank.EIGHT), new Card(Suit.DIAMONDS, Rank.FIVE));
+    private List<Card> cardList = new ArrayList<>();
+
+    private PlayerPerk playerPerk = PlayerPerk.NONE;
 
     private String password;
 
+    public Player(String name){
+        this.name = name;
+    }
 }

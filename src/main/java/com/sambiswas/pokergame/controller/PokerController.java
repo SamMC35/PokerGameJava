@@ -1,11 +1,15 @@
 package com.sambiswas.pokergame.controller;
 
+import com.sambiswas.pokergame.dto.TableDTO;
+import com.sambiswas.pokergame.entity.Input;
 import com.sambiswas.pokergame.entity.Player;
 import com.sambiswas.pokergame.entity.Table;
 import com.sambiswas.pokergame.service.PlayerService;
 import com.sambiswas.pokergame.service.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -20,8 +24,10 @@ public class PokerController {
     private PlayerService playerService;
 
     @GetMapping("/getTableInfo")
-    public Table getTableInfo(){
-        return tableService.getTableInfo();
+    public TableDTO getTableInfo(){
+        Table tableInfo = tableService.getTableInfo();
+
+        return new TableDTO(tableInfo.getPot(), tableInfo.getTableState(), playerService.returnPlayerList());
     }
 
     @GetMapping("/getPlayers")
@@ -44,10 +50,20 @@ public class PokerController {
         return Map.of("tableInitiated", tableService.isTableInitiated());
     }
 
+    @PostMapping("/processInput")
+    public void processInput(@RequestBody Input input){
+        int bet = playerService.processPlayerInput(getPlayerById(input.getId()), input.getInputType(), tableService.fetchMaxBet(), input.getRaiseValue());
+        tableService.addPot(bet);
+        tableService.processTable();
+    }
+
     @PostMapping("/startGame")
     public void startGame(){
+        if(playerService.returnPlayerList().size() < 3){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Need 3 or more players");
+        }
         tableService.resetTable();
-        playerService.resetPlayers();
+        playerService.resetPlayersForNextBettingRound();
     }
 
 

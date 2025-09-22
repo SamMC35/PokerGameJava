@@ -59,7 +59,22 @@ async function fetchData() {
     })
   } else {
     console.error("Failed to fetch data", response.status)
+    showPopup(response.message)
   }
+
+}
+
+function showPopup(message) {
+  const popup = document.createElement("div");
+  popup.className =
+    "fixed bottom bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg animate-bounce";
+  popup.textContent = message;
+
+  document.body.appendChild(popup);
+
+  setTimeout(() => {
+    popup.remove();
+  }, 3000); // remove after 3 seconds
 }
 
 window.onload = function () {

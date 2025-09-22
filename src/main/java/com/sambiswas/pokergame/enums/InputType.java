@@ -3,7 +3,8 @@ package com.sambiswas.pokergame.enums;
 public enum InputType {
     CALLING("calling"),
     RAISING("raising"),
-    FOLDING("folding");
+    FOLDING("folding"),
+    ALL_IN("all_in");
 
     private final String action;
 

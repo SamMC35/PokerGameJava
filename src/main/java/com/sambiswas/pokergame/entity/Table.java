@@ -14,8 +14,12 @@ public class Table {
     private int maxBet;
     private TableState tableState;
 
+    private List<Player> winner;
+
     private boolean isStateChanged;
     private boolean isTableProcessed;
+
+    boolean showDowned = false;
 
     public void setTableState(TableState tableState){
         isStateChanged = true;

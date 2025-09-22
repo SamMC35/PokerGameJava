@@ -7,15 +7,20 @@ async function getTableData(){
     })
 
     if(response.ok){
+
         const result = await response.json()
 
-        const potDiv = document.getElementById("pot")
+        console.log("Result: " + JSON.stringify(result))
+
+        const potDiv = document.getElementById("tablePot")
         potDiv.textContent = "Pot:" + result.pot
 
         const stateDiv = document.getElementById("tableState")
         stateDiv.textContent = "Table State:" + result.tableState
 
         const tableBody = document.querySelector('#data-table tbody')
+
+        tableBody.innerHTML = ""
 
 
         var playerData = result.playerList
@@ -41,4 +46,6 @@ async function getTableData(){
 
 
 
-window.onload = getTableData
+window.onload = function() {
+    this.setInterval(getTableData,100)
+}
