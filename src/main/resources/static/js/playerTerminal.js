@@ -35,7 +35,7 @@ function getRank(rank){
 
 
 async function getPlayerData(){
-    const playerString = await localStorage.getItem('playerJson')
+    const playerString = await sessionStorage.getItem('playerJson')
 
     const currentUrl = "http://" + window.location.hostname + ":" + window.location.port
 
@@ -88,7 +88,7 @@ async function getPlayerData(){
 }
 
 async function processInput(input){
-    const resultJsonString = await localStorage.getItem('playerJson')
+    const resultJsonString = await sessionStorage.getItem('playerJson')
 
     console.log(JSON.stringify(resultJsonString))
 

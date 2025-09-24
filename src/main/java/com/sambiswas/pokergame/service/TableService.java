@@ -13,5 +13,5 @@ public interface TableService {
     boolean isTableInitiated();
     void processTable();
 
-    List<Player> getWinner();
+    Player getWinner();
 }

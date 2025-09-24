@@ -14,7 +14,7 @@ public class Table {
     private int maxBet;
     private TableState tableState;
 
-    private List<Player> winner;
+    private Player winner;
 
     private boolean isStateChanged;
     private boolean isTableProcessed;

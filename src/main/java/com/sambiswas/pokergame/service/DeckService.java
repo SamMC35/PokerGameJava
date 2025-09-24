@@ -9,4 +9,5 @@ public interface DeckService {
     void shuffleDeck();
     Card returnOneCard();
     List<List<Card>> generateCombinations(List<Card> tableCards);
+    void addBackCards(List<Card> cardList);
 }

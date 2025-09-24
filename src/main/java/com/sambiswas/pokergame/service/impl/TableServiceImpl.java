@@ -6,6 +6,7 @@ import com.sambiswas.pokergame.entity.Player;
 import com.sambiswas.pokergame.entity.Table;
 import com.sambiswas.pokergame.enums.Hand;
 import com.sambiswas.pokergame.enums.PlayerState;
+import com.sambiswas.pokergame.enums.Rank;
 import com.sambiswas.pokergame.enums.TableState;
 import com.sambiswas.pokergame.exception.PokerGameException;
 import com.sambiswas.pokergame.service.DeckService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Component
@@ -44,6 +46,8 @@ public class TableServiceImpl implements TableService {
 
     @Override
     public void resetTable() {
+        deckService.shuffleDeck();
+
         table.setTableCards(new ArrayList<>());
         table.setPot(0);
         table.setTableState(TableState.PRE_FLOP);
@@ -63,6 +67,8 @@ public class TableServiceImpl implements TableService {
         addPot(BIG_BLIND);
 
         isTableInitiated = true;
+
+        playerService.resetPlayersForNextGame();
     }
 
     @Override
@@ -104,7 +110,7 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
-    public List<Player> getWinner() {
+    public Player getWinner() {
         return table.getWinner();
     }
 
@@ -132,12 +138,14 @@ public class TableServiceImpl implements TableService {
                 break;
             case SHOWDOWN:
                 determineWinner();
-                table.getWinner().forEach(winner -> winner.setWallet(winner.getWallet() + (table.getPot()/table.getWinner().size())));
+                table.getWinner().setWallet(table.getWinner().getWallet() + table.getPot());
                 table.setShowDowned(true);
                 break;
             default:
                 throw new PokerGameException("Invalid state: " + table.getTableState());
         }
+
+        playerService.resetPlayersForNextBettingRound();
 
         table.setTableProcessed(true);
     }
@@ -169,7 +177,13 @@ public class TableServiceImpl implements TableService {
                 .map(Player::getHand)
                 .max(Comparator.comparingInt(Hand::getRank))
                 .orElse(null);
-        table.setWinner(playerList.stream().filter(player -> player.getHand().equals(winningHand)).toList());
+        List<Player> winnerList = playerList.stream().filter(player -> player.getHand().equals(winningHand)).toList();
+
+        Optional<Player> max = winnerList.stream()
+                .max(Comparator.comparingInt(winner -> winner.getCardList().stream()
+                        .mapToInt(player -> player.getRank().getValue()).max().orElse(Integer.MIN_VALUE)));
+
+        table.setWinner(max.orElseThrow(() -> new PokerGameException("Winner wasnt found")));
     }
 
 

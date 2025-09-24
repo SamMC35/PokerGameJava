@@ -29,9 +29,9 @@ async function addPlayer(event) {
       document.getElementById("name").value = "";
       document.getElementById("password").value = "";
 
-      localStorage.setItem('playerJson', JSON.stringify(result))
+      sessionStorage.setItem('playerJson', JSON.stringify(result))
 
-      console.log(localStorage.getItem('playerJson'))
+      console.log(sessionStorage.getItem('playerJson'))
 
       window.location.href = "/waiting"
 

@@ -4,6 +4,7 @@ import com.sambiswas.pokergame.entity.Card;
 import com.sambiswas.pokergame.enums.Rank;
 import com.sambiswas.pokergame.enums.Suit;
 import com.sambiswas.pokergame.service.DeckService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 public class DeckServiceImpl implements DeckService {
     private final List<Card> cardList = new ArrayList<>();
 
+    @PostConstruct
     @Override
     public void initDeck() {
         for(Suit suit : Suit.values()){
@@ -40,6 +42,11 @@ public class DeckServiceImpl implements DeckService {
         return cardCombos;
     }
 
+    @Override
+    public void addBackCards(List<Card> cardList) {
+        this.cardList.addAll(cardList);
+    }
+
     private void gatherAllCombos(List<Card> tableCards, List<Card> dummyList, List<List<Card>> cardCombos, int start) {
         if(dummyList.size() == 3){
             cardCombos.add(new ArrayList<>(dummyList));
@@ -52,4 +59,5 @@ public class DeckServiceImpl implements DeckService {
             dummyList.removeLast();
         }
     }
+
 }
