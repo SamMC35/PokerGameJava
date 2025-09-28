@@ -15,6 +15,7 @@ public class TableDTO {
     private int pot;
     private TableState tableState;
     private List<Card> tableCards;
-
     private List<Player> playerList;
+
+    private Player winner;
 }

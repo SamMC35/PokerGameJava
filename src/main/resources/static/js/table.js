@@ -26,6 +26,7 @@ function getRank(rank){
         case "SEVEN": return "7";
         case "EIGHT": return "8";
         case "NINE": return "9";
+        case "TEN" : return "10";
         case "KING": return "K";
         case "QUEEN": return "Q";
         case "JACK": return "J";
@@ -105,9 +106,40 @@ async function getTableData(){
                     tableCards.appendChild(cardDiv);
             })
         }
+
+        //Winner
+
+        const modalBlock = document.getElementById("modalBlock")
+
+        console.log("Processing winner: ", result.winner)
+
+        if(result.winner){
+            
+            const winnerModalText = document.getElementById("winnerModalText")
+            modalBlock.classList.remove('hidden')
+            winnerModalText.innerText = `${result.winner.name} won with a ${result.winner.hand}`
+        
+            const nextGameModal = document.getElementById('nextGameModal')
+
+            nextGameModal.addEventListener('click', resetTableForNewRound)
+        } else {
+            modalBlock.classList.add('hidden')
+        }
     }
 }
 
+async function resetTableForNewRound(){
+    const currentUrl =  "http://" + window.location.hostname + ":" + window.location.port
+
+    const response = await fetch(currentUrl + "/resetGame", {
+        method : "POST"
+    })
+
+    if(response.ok){
+        const nextGameModal = document.getElementById('nextGameModal')
+        modalBlock.classList.add('hidden')
+    }
+}
 
 
 window.onload = function() {

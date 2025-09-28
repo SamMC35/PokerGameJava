@@ -111,6 +111,8 @@ async function processInput(input){
         
         if(response.ok){
             console.log("Processed Input")
+        } else {
+            
         }
     }catch(err){
         console.error("Error: " + err)

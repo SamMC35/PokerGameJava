@@ -27,7 +27,7 @@ public class PokerController {
     public TableDTO getTableInfo(){
         Table tableInfo = tableService.getTableInfo();
 
-        return new TableDTO(tableInfo.getPot(), tableInfo.getTableState(), tableInfo.getTableCards(), playerService.returnPlayerList());
+        return new TableDTO(tableInfo.getPot(), tableInfo.getTableState(), tableInfo.getTableCards(), playerService.returnPlayerList(), tableInfo.getWinner());
     }
 
     @GetMapping("/getPlayers")
@@ -71,5 +71,11 @@ public class PokerController {
         return tableService.getWinner();
     }
 
+    @PostMapping("/resetGame")
+    public void resetGame(){
+        tableService.resetTable();
+        playerService.resetPlayersForNextGame();
+        playerService.resetPlayersForNextBettingRound();
+    }
 
 }
