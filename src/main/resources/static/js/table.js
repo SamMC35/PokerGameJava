@@ -62,7 +62,16 @@ async function getTableData(){
         var playerData = result.playerList
 
         playerData.forEach(player => {
+            console.debug("Player: " + player)
             const row = document.createElement('tr')
+
+            var bulb;
+
+            if(player.currentPlayer == true){
+                bulb = "🟢";
+            } else {
+                bulb = "🔴"
+            }
 
             row.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
@@ -72,7 +81,16 @@ async function getTableData(){
                 ${player.wallet}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                ${player.isCurrentPlayer}
+                ${player.bet}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                ${player.playerState}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                ${player.playerPerk}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                ${bulb}
                 </td>
             `
             tableBody.appendChild(row)
@@ -117,7 +135,7 @@ async function getTableData(){
             
             const winnerModalText = document.getElementById("winnerModalText")
             modalBlock.classList.remove('hidden')
-            winnerModalText.innerText = `${result.winner.name} won with a ${result.winner.hand}`
+            winnerModalText.innerText = `${result.winner.name} won $${result.pot} with a ${result.winner.hand}`
         
             const nextGameModal = document.getElementById('nextGameModal')
 

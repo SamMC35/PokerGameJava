@@ -2,7 +2,9 @@ package com.sambiswas.pokergame.service.impl;
 
 import com.sambiswas.pokergame.dto.PlayerDTO;
 import com.sambiswas.pokergame.entity.Player;
+import com.sambiswas.pokergame.enums.Hand;
 import com.sambiswas.pokergame.enums.InputType;
+import com.sambiswas.pokergame.enums.PlayerPerk;
 import com.sambiswas.pokergame.enums.PlayerState;
 import com.sambiswas.pokergame.exception.PokerGameException;
 import com.sambiswas.pokergame.service.DeckService;
@@ -25,12 +27,16 @@ public class PlayerServiceImpl implements PlayerService {
 
     List<Player> mutablePlayerList;
     List<Player> dealerPlayerList;
+
+    List<Player> ogPlayerList;
     Player dealer;
 
 
     public PlayerServiceImpl(){
         mutablePlayerList = new ArrayList<>();
         dealerPlayerList = new ArrayList<>();
+
+        ogPlayerList = new ArrayList<>();
     }
 
 
@@ -39,12 +45,16 @@ public class PlayerServiceImpl implements PlayerService {
         player.setId(counter.incrementAndGet());
         mutablePlayerList.add(player);
         dealerPlayerList.add(player);
+        ogPlayerList.add(player);
         return player.getId();
     }
 
     @Override
     public List<Player> returnPlayerList() {
-        return mutablePlayerList;
+        ogPlayerList.forEach(ogPlayer -> {
+            ogPlayer.setCurrentPlayer(ogPlayer.equals(mutablePlayerList.getFirst()));
+        });
+        return ogPlayerList;
     }
 
     @Override
@@ -120,14 +130,12 @@ public class PlayerServiceImpl implements PlayerService {
                     player.setCardList(new ArrayList<>());
                     IntStream.range(1, 3).forEach(i -> {
                         player.getCardList().add(deckService.returnOneCard());
+                        player.setPlayerState(PlayerState.WAITING);
+                        player.setBet(0);
+                        player.setPlayerPerk(PlayerPerk.NONE);
+                        player.setHand(Hand.NONE);
                     });
                 });
-    }
-
-    @Override
-    public void setDealer() {
-        mutablePlayerList.add(mutablePlayerList.removeFirst());
-        dealer = mutablePlayerList.getFirst();
     }
 
     @Override
@@ -149,7 +157,19 @@ public class PlayerServiceImpl implements PlayerService {
         return new PlayerDTO(dealer, dealerPlayerList.get(1), dealerPlayerList.get(2));
     }
 
+    @Override
+    public boolean checkIfSolePlayerExists() {
+        return mutablePlayerList.stream().filter(player -> player.getPlayerState() != PlayerState.FOLDED).toList().size() == 1;
+    }
+
+    @Override
+    public Player getSoloWinner() {
+        return mutablePlayerList.stream().filter(player -> player.getPlayerState() != PlayerState.FOLDED).toList().getFirst();
+    }
+
     private void changeCurrentPlayer(){
-        mutablePlayerList.add(mutablePlayerList.removeFirst());
+        do {
+            mutablePlayerList.add(mutablePlayerList.removeFirst());
+        } while(mutablePlayerList.getFirst().getPlayerState() == PlayerState.FOLDED);
     }
 }

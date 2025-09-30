@@ -63,7 +63,6 @@ public class PokerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Need 3 or more players");
         }
         tableService.resetTable();
-        playerService.resetPlayersForNextBettingRound();
     }
 
     @GetMapping("/getWinner")
@@ -74,8 +73,6 @@ public class PokerController {
     @PostMapping("/resetGame")
     public void resetGame(){
         tableService.resetTable();
-        playerService.resetPlayersForNextGame();
-        playerService.resetPlayersForNextBettingRound();
     }
 
 }

@@ -4,10 +4,7 @@ import com.sambiswas.pokergame.dto.PlayerDTO;
 import com.sambiswas.pokergame.entity.Card;
 import com.sambiswas.pokergame.entity.Player;
 import com.sambiswas.pokergame.entity.Table;
-import com.sambiswas.pokergame.enums.Hand;
-import com.sambiswas.pokergame.enums.PlayerState;
-import com.sambiswas.pokergame.enums.Rank;
-import com.sambiswas.pokergame.enums.TableState;
+import com.sambiswas.pokergame.enums.*;
 import com.sambiswas.pokergame.exception.PokerGameException;
 import com.sambiswas.pokergame.service.DeckService;
 import com.sambiswas.pokergame.service.HandService;
@@ -48,27 +45,32 @@ public class TableServiceImpl implements TableService {
     public void resetTable() {
         deckService.shuffleDeck();
 
+        playerService.resetPlayersForNextGame();
+
         table.setTableCards(new ArrayList<>());
         table.setPot(0);
         table.setTableState(TableState.PRE_FLOP);
         table.setWinner(null);
         table.setShowDowned(false);
+        table.setTableProcessed(true);
 
         PlayerDTO playerDTO = playerService.changeDealerForAnotherRound();
 
+        playerDTO.getDealer().setPlayerPerk(PlayerPerk.DEALER);
+
         playerDTO.getSmallBlind().setWallet(playerDTO.getSmallBlind().getWallet() - SMALL_BLIND);
         playerDTO.getSmallBlind().setBet(SMALL_BLIND);
+        playerDTO.getSmallBlind().setPlayerPerk(PlayerPerk.SMALL_BLIND);
 
         addPot(SMALL_BLIND);
 
         playerDTO.getBigBlind().setWallet(playerDTO.getBigBlind().getWallet() - BIG_BLIND);
         playerDTO.getBigBlind().setBet(BIG_BLIND);
+        playerDTO.getBigBlind().setPlayerPerk(PlayerPerk.BIG_BLIND);
 
         addPot(BIG_BLIND);
 
         isTableInitiated = true;
-
-        playerService.resetPlayersForNextGame();
     }
 
     @Override
@@ -80,10 +82,6 @@ public class TableServiceImpl implements TableService {
     public void addPot(int value) {
         int pot = table.getPot();
         table.setPot(pot + value);
-
-        if(table.getMaxBet() < value){
-            table.setMaxBet(value);
-        }
     }
 
     @Override
@@ -100,13 +98,29 @@ public class TableServiceImpl implements TableService {
     public void processTable() {
         //Check if state can be switched
         if (!table.isShowDowned()) {
-            if(checkSwitchState()){
-                switchStateForCardPlay();
-            }
-            if(!table.isTableProcessed()) {
-                processState();
+            if (!checkIfSolePlayerExists()) {
+                if(checkSwitchState()){
+                    switchStateForCardPlay();
+                }
+                if(!table.isTableProcessed()) {
+                    processState();
+                }
+            } else {
+                hailTheSoloWinner();
             }
         }
+
+        table.setMaxBet(playerService.returnPlayerList().stream().mapToInt(Player::getBet).max().orElseThrow(() -> new PokerGameException("Error in setting Max bet")));
+    }
+
+    private void hailTheSoloWinner() {
+        table.setWinner(playerService.getSoloWinner());
+        table.setTableState(TableState.SHOWDOWN);
+        table.setShowDowned(true);
+    }
+
+    private boolean checkIfSolePlayerExists() {
+        return playerService.checkIfSolePlayerExists();
     }
 
     @Override

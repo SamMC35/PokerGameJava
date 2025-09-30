@@ -19,10 +19,12 @@ public interface PlayerService {
 
     void resetPlayersForNextGame();
 
-    void setDealer();
-
     Player getDealer();
     Player getCurrentPlayer();
 
     PlayerDTO changeDealerForAnotherRound();
+
+    boolean checkIfSolePlayerExists();
+
+    Player getSoloWinner();
 }

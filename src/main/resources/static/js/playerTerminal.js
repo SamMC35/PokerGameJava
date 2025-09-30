@@ -118,7 +118,7 @@ async function processInput(input, raiseVal){
     try{
         const payload = JSON.stringify({id: playerJson.id, inputType: input, raiseValue: raiseVal})
 
-        console.log("Payload: " + payload)
+        console.debug("Payload: " + payload)
 
         var response = await fetch(currentUrl + "/processInput", {
             method: "POST",
@@ -143,7 +143,7 @@ async function listenInput(input){
         const raiseBlock = document.getElementById('raiseBlock')
         raiseBlock.classList.remove('hidden')
     } else {
-        processInput(input)
+        processInput(input, 0)
     }
 }
 
@@ -157,7 +157,8 @@ const raiseLabel = document.getElementById('raiseLabel')
 const raiseOkModal = document.getElementById("RaiseOkModal")
 
 raiseOkModal.addEventListener('click', () => {
-    processRaise('RAISING', raiseLabel.value)
+    raiseBlock.classList.add('hidden')
+    processInput('RAISING', raiseLabel.value)
 })
 
 const raiseCancelModal = document.getElementById("RaiseCancelModal")
