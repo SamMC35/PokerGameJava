@@ -71,6 +71,8 @@ public class TableServiceImpl implements TableService {
         addPot(BIG_BLIND);
 
         isTableInitiated = true;
+
+        setMaxBetForTable();
     }
 
     @Override
@@ -110,6 +112,10 @@ public class TableServiceImpl implements TableService {
             }
         }
 
+        setMaxBetForTable();
+    }
+
+    private void setMaxBetForTable() {
         table.setMaxBet(playerService.returnPlayerList().stream().mapToInt(Player::getBet).max().orElseThrow(() -> new PokerGameException("Error in setting Max bet")));
     }
 
