@@ -26,6 +26,7 @@ function getRank(rank){
         case "SEVEN": return "7";
         case "EIGHT": return "8";
         case "NINE": return "9";
+        case "TEN" : return "10";
         case "KING": return "K";
         case "QUEEN": return "Q";
         case "JACK": return "J";
@@ -43,6 +44,11 @@ async function getPlayerData(){
 
     console.log(playerJson)
 
+    const modalBlock = document.getElementById("modalBlock")
+    const OkModal = document.getElementById('OkModal')
+
+    OkModal.addEventListener('click', () => { modalBlock.classList.add('hidden')})
+    
     try{
         const response = await fetch(currentUrl + "/getPlayer/" + playerJson.id)
 
@@ -81,13 +87,23 @@ async function getPlayerData(){
                     cardsDiv.appendChild(cardDiv);
                 });
             }
+
+            const raiseLabel = document.getElementById('raiseLabel')
+            raiseLabel.max = json.wallet
+            // raiseLabel.value = json.wallet/2
+
+            const maxLabel = document.getElementById('max-label')
+            maxLabel.textContent = `Max Value: ${json.wallet}`
+
         }
     } catch(err){
         console.error("Error: " + err)
     }
 }
 
-async function processInput(input){
+
+
+async function processInput(input, raiseVal){
     const resultJsonString = await sessionStorage.getItem('playerJson')
 
     console.log(JSON.stringify(resultJsonString))
@@ -98,8 +114,9 @@ async function processInput(input){
 
     console.log(JSON.stringify(playerJson))
 
+
     try{
-        const payload = JSON.stringify({id: playerJson.id, inputType: input})
+        const payload = JSON.stringify({id: playerJson.id, inputType: input, raiseValue: raiseVal})
 
         console.log("Payload: " + payload)
 
@@ -112,13 +129,47 @@ async function processInput(input){
         if(response.ok){
             console.log("Processed Input")
         } else {
-            
+            const modalBlock = document.getElementById("modalBlock")
+            modalBlock.classList.remove('hidden')
         }
     }catch(err){
         console.error("Error: " + err)
+    }
+    
+}
+
+async function listenInput(input){
+    if(input == 'RAISING'){
+        const raiseBlock = document.getElementById('raiseBlock')
+        raiseBlock.classList.remove('hidden')
+    } else {
+        processInput(input)
     }
 }
 
 window.onload = function() {
     setInterval(getPlayerData, 200)
 }
+
+const raiseBlock = document.getElementById('raiseBlock')
+const raiseLabel = document.getElementById('raiseLabel')
+
+const raiseOkModal = document.getElementById("RaiseOkModal")
+
+raiseOkModal.addEventListener('click', () => {
+    processRaise('RAISING', raiseLabel.value)
+})
+
+const raiseCancelModal = document.getElementById("RaiseCancelModal")
+
+raiseCancelModal.addEventListener('click', () => {
+    raiseBlock.classList.add('hidden')
+})
+
+
+raiseLabel.addEventListener('input', () => {
+    const currentValueRaise = document.getElementById('current-value-raise')
+
+    currentValueRaise.textContent = `Current Value: ${raiseLabel.value}`
+})
+
